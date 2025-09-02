@@ -1,0 +1,492 @@
+<!doctype html> 
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Digital Job Application</title>
+  <meta name="description" content="Online job application form — responsive, accessible, and exportable."/>
+
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --accent:#06b6d4; --muted:#94a3b8; --text:#e6eef6;
+      --radius:12px;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; background:linear-gradient(180deg,#071021 0%, #071827 100%); color:var(--text);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      padding:28px; display:flex; justify-content:center;
+    }
+    .container{
+      width:100%; max-width:980px;
+    }
+    header{
+      margin-bottom:18px; display:flex; gap:12px; align-items:center;
+    }
+    header h1{margin:0; font-size:20px}
+    header p{margin:0; color:var(--muted); font-size:13px}
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:var(--radius); padding:20px; box-shadow:0 8px 30px rgba(2,6,23,0.6);
+    }
+    form {display:grid; gap:14px}
+    .row{display:flex; gap:12px; flex-wrap:wrap}
+    .col{flex:1; min-width:200px}
+    label{display:block; font-size:13px; margin-bottom:6px}
+    input[type="text"], input[type="email"], input[type="tel"], input[type="url"], select, textarea{
+      width:100%; padding:10px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.06);
+      background:rgba(255,255,255,0.02); color:var(--text); font-size:14px;
+    }
+    textarea{min-height:110px; resize:vertical}
+    .small{font-size:13px; color:var(--muted)}
+
+    .file-drop{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:12px; border-radius:8px; border:2px dashed rgba(255,255,255,0.04);
+      background:linear-gradient(180deg, rgba(6,182,212,0.03), transparent);
+    }
+    .file-info{font-size:13px; color:var(--muted)}
+    .btn{
+      display:inline-block; padding:10px 14px; border-radius:10px; cursor:pointer;
+      background:var(--accent); color:#012027; font-weight:600; border:none;
+    }
+    .btn.secondary{background:transparent; color:var(--text); border:1px solid rgba(255,255,255,0.06)}
+    .controls{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+    .muted{color:var(--muted)}
+    .section-title{font-weight:700; margin-top:6px}
+
+    .repeat-list{display:flex; flex-direction:column; gap:10px}
+    .repeat-item{padding:10px; border-radius:8px; background:rgba(0,0,0,0.12); border:1px solid rgba(255,255,255,0.02)}
+    .repeat-item .row{align-items:center}
+    .tiny{font-size:12px}
+    .error{color:#ffb4ab; font-size:13px}
+
+    footer{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:8px}
+    @media (max-width:640px){
+      .row{flex-direction:column}
+      header{flex-direction:column; align-items:flex-start}
+      footer{flex-direction:column; align-items:stretch}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Digital Job Application</h1>
+        <p class="small"></p>
+      </div>
+    </header>
+
+    <div class="card" role="main">
+      <!-- form posts to FormSubmit which will send to Titanbusinesspros@gmail.com -->
+      <form id="appForm" action="https://formsubmit.co/Titanbusinesspros@gmail.com" method="POST" enctype="multipart/form-data" novalidate>
+        <!-- FormSubmit hidden config -->
+        <input type="hidden" name="_subject" value="New Job Application - Titan Business Pros">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
+        <!-- Change this _next value to your actual thank-you page if desired -->
+        <input type="hidden" name="_next" id="_next" value="https://yourdomain.com/thank-you.html">
+
+        <!-- Hidden JSON fields for repeatable data (filled before submit) -->
+        <input type="hidden" name="experiences" id="hiddenExperiences" value="">
+        <input type="hidden" name="education" id="hiddenEducation" value="">
+
+        <!-- Basic -->
+        <div>
+          <div class="section-title">Personal Information</div>
+          <div class="row" style="margin-top:8px">
+            <div class="col">
+              <label for="fullName">Full name <span aria-hidden="true">*</span></label>
+              <input id="fullName" name="fullName" type="text" autocomplete="name" required />
+              <div class="error" id="err-fullName" aria-live="polite"></div>
+            </div>
+            <div class="col">
+              <label for="email">Email <span aria-hidden="true">*</span></label>
+              <input id="email" name="email" type="email" autocomplete="email" required />
+              <div class="error" id="err-email" aria-live="polite"></div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <label for="phone">Phone</label>
+              <input id="phone" name="phone" type="tel" autocomplete="tel" />
+            </div>
+            <div class="col">
+              <label for="location">City, State</label>
+              <input id="location" name="location" type="text" placeholder="e.g., Norman, OK" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Job -->
+        <div>
+          <div class="section-title">Position & Availability</div>
+          <div class="row" style="margin-top:8px">
+            <div class="col">
+              <label for="position">Position applying for</label>
+              <select id="position" name="position">
+                <option value="">— Select —</option>
+                <option>Frontend Developer</option>
+                <option>Backend Developer</option>
+                <option>UX/UI Designer</option>
+                <option>Project Manager</option>
+                <option>Operations</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="col">
+              <label for="startDate">Available start date</label>
+              <input id="startDate" name="startDate" type="date" />
+            </div>
+            <div class="col">
+              <label for="salary">Desired salary (USD)</label>
+              <input id="salary" name="salary" type="text" inputmode="numeric" placeholder="e.g., 60000" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Experience (repeatable) -->
+        <div>
+          <div class="section-title">Work Experience</div>
+          <div class="small muted">Add your recent jobs (most recent first)</div>
+          <div style="margin-top:10px" id="experienceList" class="repeat-list"></div>
+          <div style="margin-top:8px">
+            <button type="button" id="addExperience" class="btn secondary">+ Add experience</button>
+          </div>
+        </div>
+
+        <!-- Education (repeatable) -->
+        <div>
+          <div class="section-title">Education</div>
+          <div class="small muted">Schools, degrees and years</div>
+          <div style="margin-top:10px" id="educationList" class="repeat-list"></div>
+          <div style="margin-top:8px">
+            <button type="button" id="addEducation" class="btn secondary">+ Add education</button>
+          </div>
+        </div>
+
+        <!-- Skills & Links -->
+        <div>
+          <div class="section-title">Skills & Links</div>
+          <div class="row" style="margin-top:8px">
+            <div class="col">
+              <label for="skills">Skills (comma separated)</label>
+              <input id="skills" name="skills" type="text" placeholder="e.g., JavaScript, React, SQL" />
+            </div>
+            <div class="col">
+              <label for="portfolio">Portfolio or LinkedIn (URL)</label>
+              <input id="portfolio" name="portfolio" type="url" placeholder="https://..." />
+            </div>
+          </div>
+        </div>
+
+        <!-- Cover & resume -->
+        <div>
+          <div class="section-title">Cover Letter & Resume</div>
+          <label for="cover">Cover letter / summary</label>
+          <textarea id="cover" name="cover" placeholder="Write a short cover note..."></textarea>
+
+          <div style="margin-top:8px">
+            <label>Resume (PDF, DOC, DOCX) <span class="small muted">(Max 5MB)</span></label>
+            <div class="file-drop" id="dropZone">
+              <div>
+                <input id="resume" name="resume" type="file" accept=".pdf,.doc,.docx" style="display:none" />
+                <div class="file-info" id="fileName">No file chosen</div>
+                <div class="small muted tiny">Drag & drop here or click Upload</div>
+              </div>
+              <div class="controls">
+                <button type="button" id="uploadBtn" class="btn secondary">Upload</button>
+                <button type="button" id="clearFile" class="btn secondary">Clear</button>
+              </div>
+            </div>
+            <div class="error" id="err-resume" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <!-- Consent -->
+        <div>
+          <label><input id="consent" name="consent" type="checkbox" required /> <strong>I certify</strong> that the information provided is accurate.</label>
+          <div class="error" id="err-consent" aria-live="polite"></div>
+        </div>
+
+        <!-- Actions -->
+        <footer>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+            <button type="submit" class="btn">Submit application</button>
+            <button type="button" id="saveLocal" class="btn secondary">Save locally</button>
+          </div>
+
+          <!-- footer text removed per request -->
+        </footer>
+      </form>
+    </div>
+
+    <div style="height:12px"></div>
+    <div class="small muted"></div>
+  </div>
+
+<!-- SCRIPT -->
+<script>
+(function(){
+  // NOTE: form submission is handled by posting to FormSubmit via native form submit.
+  // We validate and then place the repeatable data into hidden inputs before calling form.submit().
+
+  // Helpers
+  const qs = s => document.querySelector(s);
+  const qsa = s => Array.from(document.querySelectorAll(s));
+  const appForm = qs('#appForm');
+  const experienceList = qs('#experienceList');
+  const educationList = qs('#educationList');
+  const resumeInput = qs('#resume');
+  const fileNameEl = qs('#fileName');
+  const dropZone = qs('#dropZone');
+  const uploadBtn = qs('#uploadBtn');
+  const clearFileBtn = qs('#clearFile');
+
+  // Add one empty experience item
+  function makeExperience(data = {}) {
+    const id = 'exp-' + Date.now() + Math.random().toString(36).slice(2,7);
+    const div = document.createElement('div');
+    div.className = 'repeat-item';
+    div.dataset.id = id;
+    div.innerHTML = `
+      <div class="row">
+        <div class="col">
+          <label>Company</label>
+          <input name="company" type="text" value="${escapeHtml(data.company||'')}" />
+        </div>
+        <div class="col">
+          <label>Title</label>
+          <input name="title" type="text" value="${escapeHtml(data.title||'')}" />
+        </div>
+        <div class="col" style="min-width:150px">
+          <label>Years</label>
+          <input name="years" type="text" value="${escapeHtml(data.years||'')}" placeholder="2019-2021" />
+        </div>
+        <div style="min-width:60px; align-self:flex-end">
+          <button type="button" class="btn secondary remove">Remove</button>
+        </div>
+      </div>
+      <label style="margin-top:8px">Description</label>
+      <textarea name="description">${escapeHtml(data.description||'')}</textarea>
+    `;
+    experienceList.appendChild(div);
+    div.querySelector('.remove').addEventListener('click', ()=> div.remove());
+    return div;
+  }
+
+  // Education
+  function makeEducation(data = {}) {
+    const id = 'edu-' + Date.now() + Math.random().toString(36).slice(2,7);
+    const div = document.createElement('div');
+    div.className = 'repeat-item';
+    div.dataset.id = id;
+    div.innerHTML = `
+      <div class="row">
+        <div class="col">
+          <label>Institution</label>
+          <input name="institution" type="text" value="${escapeHtml(data.institution||'')}" />
+        </div>
+        <div class="col">
+          <label>Degree</label>
+          <input name="degree" type="text" value="${escapeHtml(data.degree||'')}" />
+        </div>
+        <div class="col" style="min-width:150px">
+          <label>Years</label>
+          <input name="yearsEdu" type="text" value="${escapeHtml(data.yearsEdu||'')}" placeholder="2016-2020" />
+        </div>
+        <div style="min-width:60px; align-self:flex-end">
+          <button type="button" class="btn secondary remove">Remove</button>
+        </div>
+      </div>
+    `;
+    educationList.appendChild(div);
+    div.querySelector('.remove').addEventListener('click', ()=> div.remove());
+    return div;
+  }
+
+  // Escape HTML for insertion into value attributes
+  function escapeHtml(s){ return (s+'').replace(/[&<>"']/g, function(m){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])}); }
+
+  // Add initial one each
+  makeExperience();
+  makeEducation();
+
+  // Add buttons
+  qs('#addExperience').addEventListener('click', ()=> makeExperience());
+  qs('#addEducation').addEventListener('click', ()=> makeEducation());
+
+  // File upload UI
+  uploadBtn.addEventListener('click', ()=> resumeInput.click());
+  resumeInput.addEventListener('change', handleFileSelect);
+  clearFileBtn.addEventListener('click', clearFile);
+
+  // Drag-drop
+  ['dragenter','dragover'].forEach(e => dropZone.addEventListener(e, ev => { ev.preventDefault(); dropZone.style.borderColor = 'rgba(6,182,212,0.6)'; }));
+  ['dragleave','drop'].forEach(e => dropZone.addEventListener(e, ev => { ev.preventDefault(); dropZone.style.borderColor = ''; }));
+  dropZone.addEventListener('drop', ev => {
+    if(ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0]){
+      resumeInput.files = ev.dataTransfer.files;
+      handleFileSelect();
+    }
+  });
+
+  function handleFileSelect(){
+    const f = resumeInput.files[0];
+    if(!f){ fileNameEl.textContent = 'No file chosen'; return; }
+    const maxBytes = 5 * 1024 * 1024; // 5MB
+    if(f.size > maxBytes){
+      qs('#err-resume').textContent = "File too large — max 5MB.";
+      resumeInput.value = '';
+      fileNameEl.textContent = "No file chosen";
+      return;
+    }
+    fileNameEl.textContent = `${f.name} (${Math.round(f.size/1024)} KB)`;
+    qs('#err-resume').textContent = '';
+  }
+  function clearFile(){ resumeInput.value=''; fileNameEl.textContent='No file chosen'; }
+
+  // Form utilities: collect repeatable items
+  function collectRepeat(listEl, mapFn){
+    return Array.from(listEl.children).map(item => {
+      const inputs = item.querySelectorAll('input, textarea, select');
+      const obj = {};
+      inputs.forEach(i => { obj[i.name] = i.value; });
+      return mapFn ? mapFn(obj) : obj;
+    });
+  }
+
+  // Validation (simple)
+  function validateForm(data){
+    let ok = true;
+    // clear errors
+    qsa('.error').forEach(e=>e.textContent='');
+
+    if(!data.fullName || data.fullName.trim().length < 2){
+      qs('#err-fullName').textContent = 'Please enter your full name.';
+      ok = false;
+    }
+    if(!data.email || !/^\S+@\S+\.\S+$/.test(data.email)){
+      qs('#err-email').textContent = 'Please enter a valid email.';
+      ok = false;
+    }
+    if(!data.consent){
+      qs('#err-consent').textContent = 'You must certify that the information is accurate.';
+      ok = false;
+    }
+    // resume optional but if chosen check
+    if(data.resume && data.resume.name){
+      const maxBytes = 5 * 1024 * 1024;
+      if(data.resume.size > maxBytes){
+        qs('#err-resume').textContent = 'Resume file is too large (max 5MB).';
+        ok = false;
+      }
+    }
+    return ok;
+  }
+
+  // Build application payload
+  async function buildPayload(){
+    const data = {
+      fullName: qs('#fullName').value.trim(),
+      email: qs('#email').value.trim(),
+      phone: qs('#phone').value.trim(),
+      location: qs('#location').value.trim(),
+      position: qs('#position').value,
+      startDate: qs('#startDate').value,
+      salary: qs('#salary').value.trim(),
+      skills: qs('#skills').value.split(',').map(s=>s.trim()).filter(Boolean),
+      portfolio: qs('#portfolio').value.trim(),
+      cover: qs('#cover').value.trim(),
+      consent: qs('#consent').checked,
+      experiences: collectRepeat(experienceList),
+      education: collectRepeat(educationList),
+    };
+
+    // file: read as data URL for JSON export; for server submit use FormData
+    const file = resumeInput.files[0];
+    if(file){
+      const dataUrl = await fileToDataUrl(file);
+      data.resume = { name: file.name, size: file.size, type: file.type, dataUrl };
+    } else data.resume = null;
+
+    return data;
+  }
+
+  function fileToDataUrl(file){
+    return new Promise((resolve, reject)=>{
+      const r = new FileReader();
+      r.onload = ()=>resolve(r.result);
+      r.onerror = e=>reject(e);
+      r.readAsDataURL(file);
+    });
+  }
+
+  // Save locally to localStorage
+  qs('#saveLocal').addEventListener('click', async ()=>{
+    try{
+      const payload = await buildPayload();
+      localStorage.setItem('jobApplicationDraft', JSON.stringify(payload));
+      alert('Saved locally in your browser (localStorage).');
+    }catch(e){ alert('Could not save: '+e.message) }
+  });
+
+  // Load draft if any
+  (function loadDraft(){
+    try {
+      const raw = localStorage.getItem('jobApplicationDraft');
+      if(!raw) return;
+      const draft = JSON.parse(raw);
+      qs('#fullName').value = draft.fullName || '';
+      qs('#email').value = draft.email || '';
+      qs('#phone').value = draft.phone || '';
+      qs('#location').value = draft.location || '';
+      qs('#position').value = draft.position || '';
+      qs('#startDate').value = draft.startDate || '';
+      qs('#salary').value = draft.salary || '';
+      qs('#skills').value = (draft.skills || []).join(', ');
+      qs('#portfolio').value = draft.portfolio || '';
+      qs('#cover').value = draft.cover || '';
+      qs('#consent').checked = !!draft.consent;
+      experienceList.innerHTML=''; educationList.innerHTML='';
+      (draft.experiences||[]).forEach(e=>makeExperience(e));
+      (draft.education||[]).forEach(e=>makeEducation(e));
+      if(draft.resume && draft.resume.name){
+        fileNameEl.textContent = draft.resume.name + ' (saved in draft)';
+      }
+    }catch(e){}
+  })();
+
+  // Submit handler
+  appForm.addEventListener('submit', async function(ev){
+    ev.preventDefault(); // we'll validate then submit programmatically to allow injecting JSON hidden fields
+    try{
+      const payload = await buildPayload();
+      const ok = validateForm(payload);
+      if(!ok) return;
+
+      // Put repeatable sections into hidden inputs so FormSubmit receives them as JSON strings
+      const hiddenExp = qs('#hiddenExperiences');
+      const hiddenEdu = qs('#hiddenEducation');
+      hiddenExp.value = JSON.stringify(payload.experiences || []);
+      hiddenEdu.value = JSON.stringify(payload.education || []);
+
+      // Now submit the form normally (this performs a full post to FormSubmit,
+      // including the file input). FormSubmit will then handle emailing the data.
+      // We leave localStorage alone here so the draft remains in case the user navigates back.
+      appForm.submit();
+
+    }catch(err){
+      console.error(err);
+      alert('Error: ' + (err.message||err));
+    }
+  });
+
+})();
+</script>
+</body>
+</html>
